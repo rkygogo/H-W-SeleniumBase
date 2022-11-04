@@ -290,6 +290,8 @@ with SB() as sb:  # By default, browser="chrome" if not set.
                     if i > 10:
                         break
                     i += 1
+            else:
+                screenshot()
         else:
             screenshot()
         push(body)
