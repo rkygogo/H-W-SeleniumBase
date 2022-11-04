@@ -169,10 +169,14 @@ def renew_check():
     sb.assert_element('div#response')
     print('- access')
     body = sb.get_text('div#response')
+    i = 1
     while body == 'Loading.....':
-        print('- waiting for response...')
+        print('- waiting for response... *', i)
+        if i > 3:
+            break
         sb.sleep(2)
         body = sb.get_text('div#response')
+        i += 1
     print('- response:', body)
     if 'renew' in body:
         body = '🎉' + body
@@ -190,10 +194,14 @@ def screenshot():
     sb.choose_file('input[type="file"]', os.getcwd() + '/' + imgFile)
     sb.sleep(6)
     imgUrl = sb.get_current_url()
+    i = 1
     while not '/a/' in imgUrl:
-        print('- waiting for url...')
+        print('- waiting for url... *', i)
+        if i > 3:
+            break
         sb.sleep(2)
         imgUrl = sb.get_current_url()
+        i += 1
     print('- 📷 img url:', imgUrl)
     body = imgUrl
     print('- screenshot upload done')
