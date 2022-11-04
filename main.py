@@ -7,7 +7,7 @@ def recaptcha():
     global body
     print('- recaptcha')
     sb.open(urlLogin)
-    sb.assert_text('Login', 'h2')
+    sb.assert_text('Login', 'h2', timeout=20)
     print('- access')
     #   reCAPTCHA
     sb.switch_to_frame('[src*="https://www.recaptcha.net/recaptcha/api2/anchor?"]')
