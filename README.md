@@ -1,7 +1,7 @@
 # H-W-SeleniumBase [![H](https://github.com/mybdye/H-W-SeleniumBase/actions/workflows/H.yml/badge.svg)](https://github.com/mybdye/H-W-SeleniumBase/actions/workflows/H.yml) [![W](https://github.com/mybdye/H-W-SeleniumBase/actions/workflows/W.yml/badge.svg)](https://github.com/mybdye/H-W-SeleniumBase/actions/workflows/W.yml)
 Project for SeleniumBase Study.
 ```diff
-- [建议自定义schedule] 
+- 建议自定义schedule
 .github/workflows/H.yml
 .github/workflows/W.yml
 例如：
