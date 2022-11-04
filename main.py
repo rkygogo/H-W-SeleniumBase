@@ -194,9 +194,9 @@ def screenshot():
         print('- waiting for url...')
         sb.sleep(2)
         imgUrl = sb.get_current_url()
-    print('- 📷img url:', imgUrl)
+    print('- 📷 img url:', imgUrl)
     body = imgUrl
-    print('- screenshot upload')
+    print('- screenshot upload done')
 
     return imgUrl
 
@@ -279,8 +279,8 @@ urlSpeech = url_decode(
 # 关闭证书验证
 ssl._create_default_https_context = ssl._create_unverified_context
 
-with SB() as sb:  # By default, browser="chrome" if not set.
-    print('- 🚀loading...')
+with SB(uc=True) as sb:  # By default, browser="chrome" if not set.
+    print('- 🚀 loading...')
     if urlBase != '' and username != '' and password != '':
         try:
             if recaptcha():
