@@ -280,19 +280,19 @@ urlSpeech = url_decode(
 ssl._create_default_https_context = ssl._create_unverified_context
 
 with SB() as sb:  # By default, browser="chrome" if not set.
-    print('loading...')
+    print('- 🚀loading...')
     if urlBase != '' and username != '' and password != '':
-        if recaptcha():
-            if login():
-                i = 1
-                while not statuRenew:
-                    renew()
-                    if i > 10:
-                        break
-                    i += 1
-            else:
-                screenshot()
-        else:
+        try:
+            if recaptcha():
+                if login():
+                    i = 1
+                    while not statuRenew:
+                        renew()
+                        if i > 10:
+                            break
+                        i += 1
+        except Exception as e:
+            print('💥', e)
             screenshot()
         push(body)
     else:
