@@ -1,5 +1,7 @@
-import os, requests, urllib, pydub, base64, ssl
+# https://github.com/mybdye 🌟
 
+
+import os, requests, urllib, pydub, base64, ssl
 from seleniumbase import SB
 
 
@@ -56,7 +58,6 @@ def recaptcha():
             sb.sleep(1)
             status = checkbox_status()
 
-
         except Exception as e:
             print('- 💣 Exception:', e)
             body = e
@@ -88,6 +89,7 @@ def login():
     sb.assert_exact_text('ACTIVE', '[class*="badge badge-success"]')
     print('- login success')
     return True
+
 
 def checkbox_status():
     print('- checkbox_status')
@@ -130,15 +132,12 @@ def speech_to_text():
 def renew():
     global statuRenew
     print('- renew')
-    #sb.open_new_window()
     sb.open(urlRenew)
     print('- access')
-    #sb.switch_to_window(0)
     sb.sleep(2)
     #
     print('- fill web_address')
     sb.type('#web_address', urlBase)
-
     #   captcha
     number1 = int(sb.find_elements('img[src]')[0].get_attribute('src').split('-')[1][0])
     number2 = int(sb.find_elements('img[src]')[1].get_attribute('src').split('-')[1][0])
@@ -154,6 +153,7 @@ def renew():
     elif method == '/':
         # 应该没有 但还是写了
         captcharesult = number1 / number2
+
     captcharesult = int(captcharesult)
     print('- captcharesult: %d %s %d = %d' % (number1, method, number2, captcharesult))
     #
@@ -177,15 +177,15 @@ def renew_check():
     body = sb.get_text('div#response')
     i = 1
     while body == 'Loading.....':
-        print('- waiting for response... *', i)
         if i > 3:
             break
+        print('- waiting for response... *', i)
         sb.sleep(2)
         body = sb.get_text('div#response')
         i += 1
     print('- response:', body)
     if 'renew' in body:
-        body = '🎉' + body
+        body = '🎉 ' + body
         return True
 
 
@@ -202,9 +202,9 @@ def screenshot():
     imgUrl = sb.get_current_url()
     i = 1
     while not '/a/' in imgUrl:
-        print('- waiting for url... *', i)
         if i > 3:
             break
+        print('- waiting for url... *', i)
         sb.sleep(2)
         imgUrl = sb.get_current_url()
         i += 1
@@ -301,9 +301,9 @@ with SB(uc=True) as sb:  # By default, browser="chrome" if not set.
                 if login():
                     i = 1
                     while not statuRenew:
-                        renew()
                         if i > 10:
                             break
+                        renew()
                         i += 1
         except Exception as e:
             print('💥', e)
@@ -314,4 +314,5 @@ with SB(uc=True) as sb:  # By default, browser="chrome" if not set.
         push(body)
     else:
         print('- please check urlBase/username/password')
-        
+
+# END
