@@ -6,9 +6,15 @@ from seleniumbase import SB
 def recaptcha():
     global body
     print('- recaptcha')
-    sb.open(urlLogin)
-    sb.assert_text('Login', 'h2', timeout=20)
-    print('- access')
+    try:
+        sb.open(urlLogin)
+        sb.assert_text('Login', 'h2', timeout=20)
+        print('- access')
+    except Exception as e:
+        print('👀 ', e, '\n try again!')
+        sb.open(urlLogin)
+        sb.assert_text('Login', 'h2', timeout=20)
+        print('- access')
     #   reCAPTCHA
     sb.switch_to_frame('[src*="https://www.recaptcha.net/recaptcha/api2/anchor?"]')
     print('- switch to frame checkbox')
@@ -287,7 +293,7 @@ urlSpeech = url_decode(
 # 关闭证书验证
 ssl._create_default_https_context = ssl._create_unverified_context
 
-with SB(uc=True) as sb:  # By default, browser="chrome" if not set.
+with SB(ad_block_on=True, uc=True) as sb:  # By default, browser="chrome" if not set.
     print('- 🚀 loading...')
     if urlBase != '' and username != '' and password != '':
         try:
