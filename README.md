@@ -30,7 +30,7 @@ schedule:
   |`URL_BASE_H` or `URL_BASE_W`|网址，至少写一个，不要带有'https://' 或 '/'|
   |`USERNAME`|你的用户名|
   |`PASSWORD`|你的密码|
-  |`BARK_TOKEN`|(可选) https://api.day.app/BARK_TOKEN/|
+  |`BARK_TOKEN`|(可选) api.day.app/`BARK_TOKEN`/ 详见 https://github.com/Finb/Bark|
   |`TG_BOT_TOKEN`|(可选) `xxxxxx:xxxxxxxxxxxxx`|
   |`TG_USER_ID`|(可选) 给 bot `@userinfobot` 发送 `/start`|
 
