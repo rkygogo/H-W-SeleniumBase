@@ -307,7 +307,10 @@ with SB(uc=True) as sb:  # By default, browser="chrome" if not set.
                         i += 1
         except Exception as e:
             print('💥', e)
-            screenshot()
+            try:
+                screenshot()
+            finally:
+                push(e)
         push(body)
     else:
         print('- please check urlBase/username/password')
