@@ -293,7 +293,7 @@ urlSpeech = url_decode(
 # 关闭证书验证
 ssl._create_default_https_context = ssl._create_unverified_context
 
-with SB(ad_block_on=True, uc=True) as sb:  # By default, browser="chrome" if not set.
+with SB(uc=True) as sb:  # By default, browser="chrome" if not set.
     print('- 🚀 loading...')
     if urlBase != '' and username != '' and password != '':
         try:
@@ -311,4 +311,4 @@ with SB(ad_block_on=True, uc=True) as sb:  # By default, browser="chrome" if not
         push(body)
     else:
         print('- please check urlBase/username/password')
-    #sb.sleep(200)
+        
