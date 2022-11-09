@@ -185,7 +185,7 @@ def renew_check():
         i += 1
     print('- response:', body)
     if 'renew' in body:
-        body = username[:3] + '***:\n🎉 ' + body
+        body = '[%s***]: 🎉 %s' % (username[:3], body)
         return True
 
 
