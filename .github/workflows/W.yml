@@ -8,21 +8,32 @@ on:
 #     branches: [ "main" ]
   schedule:
     # UTC (国内 UTC+8)
-    - cron: '15 4 * * 1,3,5'
+    - cron: '15 4 * * *'
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
 jobs:
-  W:
-    runs-on: ubuntu-22.04
+  build:
+    runs-on: ubuntu-latest
     # 超时设置
-    timeout-minutes: 20
+    timeout-minutes: 10
     steps:
-      - name: checkout
+    # 抛硬币，字向上才运行
+      - id: Roll the dice
+        run: echo "PROCEED=$((RANDOM%2))" >> $GITHUB_ENV
+        shell: bash
+      - if: env.PROCEED == '0'
+        name: Cancelling
+        uses: andymckay/cancel-action@0.2
+      - if: env.PROCEED == '0'
+        name: Waiting for cancellation
+        run: sleep 60
+    #
+      - name: Checkout
         uses: actions/checkout@v3
       - name: Setup FFmpeg using versions
         uses: Iamshankhadeep/setup-ffmpeg@v1.2
-      - name: 'Environment Settings'
+      - name: Setup Environment
         run: |
           pip install --upgrade pip
           pip install -r ./requirements.txt
