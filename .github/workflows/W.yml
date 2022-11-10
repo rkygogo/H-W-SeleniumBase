@@ -19,7 +19,7 @@ jobs:
     timeout-minutes: 10
     steps:
     # 抛硬币，字向上才运行
-      - id: Roll the dice
+      - id: Roll_the_dice
         run: echo "PROCEED=$((RANDOM%2))" >> $GITHUB_ENV
         shell: bash
       - if: env.PROCEED == '0'
