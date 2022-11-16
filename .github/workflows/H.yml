@@ -2,13 +2,13 @@
 name: H
 on:
   # Triggers the workflow on push or pull request events but only for the "main" branch
-  push:
-    branches: [ "main" ]
-#   pull_request:
-#     branches: [ "main" ]
+#  push:
+#    branches: [ "main" ]
+#  pull_request:
+#    branches: [ "main" ]
   schedule:
     # UTC (国内 UTC+8)
-    - cron: '15 10 * * 1,3,5'
+    - cron: '05 10 * * *'
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
@@ -16,7 +16,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     # 超时设置
-    timeout-minutes: 10
+    timeout-minutes: 6
     steps:
     # 抛硬币，字向上才运行
 #      - id: Roll_the_dice
@@ -31,12 +31,22 @@ jobs:
     #
       - name: Checkout
         uses: actions/checkout@v3
+        
+#       - name: Setup WARP
+#         run: |
+#           git clone -b main https://github.com/P3TERX/warp.sh ~/warp
+#           cd ~/warp
+#           sudo bash ./warp.sh wgd
+          
       - name: Setup FFmpeg using versions
         uses: Iamshankhadeep/setup-ffmpeg@v1.2
+        
       - name: Setup Environment
         run: |
           pip install --upgrade pip
+          pip install Pillow pyscreenshot
           pip install -r ./requirements.txt
+          
       - name: 'Renew'
         env:
           URL_BASE: ${{ secrets.URL_BASE_H }}

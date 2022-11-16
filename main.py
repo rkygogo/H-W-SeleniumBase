@@ -1,24 +1,37 @@
 # https://github.com/mybdye 🌟
 
 
-import os, requests, urllib, pydub, base64, ssl
+import os, requests, urllib, pydub, base64, ssl, random
 from seleniumbase import SB
+from func_timeout import func_set_timeout, FunctionTimedOut
+import pyscreenshot as ImageGrab
 
-
+@func_set_timeout(60)
+def urlOpen(url):
+    try:
+        print('- url open:', url)
+        sb.open(url)
+    except FunctionTimedOut as e:
+        print('- 👀 url open:', e)
+    print('- func url open finish')
+    
 def recaptcha():
     global body
     print('- recaptcha')
     try:
-        sb.open(urlLogin)
+        #sb.open(urlLogin)
+        urlOpen(urlLogin)
         sb.assert_text('Login', 'h2', timeout=20)
         print('- access')
     except Exception as e:
         print('👀 ', e, '\n try again!')
-        sb.open(urlLogin)
+        sb.driver.close()
+        #sb.open(urlLogin)
+        urlOpen(urlLogin)
         sb.assert_text('Login', 'h2', timeout=20)
         print('- access')
     #   reCAPTCHA
-    sb.switch_to_frame('[src*="https://www.recaptcha.net/recaptcha/api2/anchor?"]')
+    sb.switch_to_frame('[src*="/recaptcha/api2/anchor?"]')
     print('- switch to frame checkbox')
     checkbox = 'span#recaptcha-anchor'
     print('- click checkbox')
@@ -26,19 +39,19 @@ def recaptcha():
     sb.sleep(4)
     #   预防弹了广告
     sb.switch_to_window(0)
-    sb.switch_to_frame('[src*="https://www.recaptcha.net/recaptcha/api2/anchor?"]')
+    sb.switch_to_frame('[src*="/recaptcha/api2/anchor?"]')
     status = checkbox_status()
     tryReCAPTCHA = 1
     while status != 'true':
         sb.switch_to_default_content()  # Exit all iframes
         sb.sleep(1)
-        sb.switch_to_frame('[src*="https://www.recaptcha.net/recaptcha/api2/bframe?"]')
+        sb.switch_to_frame('[src*="/recaptcha/api2/bframe?"]')
         print('- switch to frame image/audio')
         sb.click("button#recaptcha-audio-button")
         try:
-            sb.assert_element('[href*="https://www.recaptcha.net/recaptcha/api2/payload/audio.mp3?"]')
+            sb.assert_element('[href*="/recaptcha/api2/payload/audio.mp3?"]', timeout=20)
             print('- normal')
-            src = sb.find_elements('[href*="https://www.recaptcha.net/recaptcha/api2/payload/audio.mp3?"]'
+            src = sb.find_elements('[href*="/recaptcha/api2/payload/audio.mp3?"]'
                                    )[0].get_attribute("href")
             print('- audio src:', src)
             # download audio file
@@ -46,15 +59,15 @@ def recaptcha():
             mp3_to_wav()
             text = speech_to_text()
             sb.switch_to_window(0)
-            sb.assert_text('Login', 'h2')
+            sb.assert_text('Login', 'h2', timeout=20)
             sb.switch_to_default_content()  # Exit all iframes
             sb.sleep(1)
-            sb.switch_to_frame('[src*="https://www.recaptcha.net/recaptcha/api2/bframe?"]')
+            sb.switch_to_frame('[src*="/recaptcha/api2/bframe?"]')
             sb.type('#audio-response', text)
             sb.click('button#recaptcha-verify-button')
             sb.sleep(4)
             sb.switch_to_default_content()  # Exit all iframes
-            sb.switch_to_frame('[src*="https://www.recaptcha.net/recaptcha/api2/anchor?"]')
+            sb.switch_to_frame('[src*="/recaptcha/api2/anchor?"]')
             sb.sleep(1)
             status = checkbox_status()
 
@@ -63,9 +76,9 @@ def recaptcha():
             body = e
             sb.switch_to_default_content()  # Exit all iframes
             sb.sleep(1)
-            sb.switch_to_frame('[src*="https://www.recaptcha.net/recaptcha/api2/bframe?"]')
+            sb.switch_to_frame('[src*="/recaptcha/api2/bframe?"]')
             msgBlock = '[class*="rc-doscaptcha-body-text"]'
-            if sb.assert_element(msgBlock):
+            if sb.assert_element(msgBlock, timeout=20):
                 body = sb.get_text(msgBlock)
                 print('- 💣 maybe block by google', body)
                 break
@@ -86,7 +99,7 @@ def login():
     sb.type('#password', password)
     sb.click('button:contains("Submit")')
     sb.sleep(20)
-    sb.assert_exact_text('ACTIVE', '[class*="badge badge-success"]')
+    sb.assert_exact_text('ACTIVE', '[class*="badge badge-success"]', timeout=20)
     print('- login success')
     return True
 
@@ -116,7 +129,7 @@ def speech_to_text():
     while trySpeech <= 3:
         print('- trySpeech *', trySpeech)
         sb.open(urlSpeech)
-        sb.assert_text('Speech to text', 'h1')
+        sb.assert_text('Speech to text', 'h1', timeout=20)
         sb.choose_file('input[type="file"]', os.getcwd() + audioWAV)
         sb.sleep(5)
         response = sb.get_text('[id*="speechout"]')
@@ -132,9 +145,14 @@ def speech_to_text():
 def renew():
     global statuRenew
     print('- renew')
-    sb.open(urlRenew)
+    #sb.open(urlRenew)
+    urlOpen(urlRenew)
+    sb.sleep(10)
+    #screenshot()
+    #sb.switch_to_window(0)
+    sb.assert_text('Renew VPS', 'h2', timeout=10)
     print('- access')
-    sb.sleep(2)
+    sb.sleep(random.randint(1,3))
     #
     print('- fill web_address')
     sb.type('#web_address', urlBase)
@@ -172,7 +190,7 @@ def renew():
 def renew_check():
     global body
     print('- renew_check')
-    sb.assert_element('div#response')
+    sb.assert_element('div#response', timeout=20)
     print('- access')
     body = sb.get_text('div#response')
     i = 1
@@ -185,19 +203,25 @@ def renew_check():
         i += 1
     print('- response:', body)
     if 'renew' in body:
-        body = '[%s***]: 🎉 %s' % (username[:3], body)
+        body = '[%s***] 🎉 %s' % (username[:3], body)
         return True
 
 
 def screenshot():
     global body
     print('- screenshot')
-    sb.save_screenshot(imgFile, folder=os.getcwd())
+    # grab fullscreen
+    im = ImageGrab.grab()
+    # save image file
+    im.save("fullscreen.png")
+    
+    #sb.save_screenshot(imgFile, folder=os.getcwd())
     print('- screenshot done')
     sb.open_new_window()
     print('- screenshot upload')
     sb.open('http://imgur.com/upload')
-    sb.choose_file('input[type="file"]', os.getcwd() + '/' + imgFile)
+    # sb.choose_file('input[type="file"]', os.getcwd() + '/' + imgFile)
+    sb.choose_file('input[type="file"]', "fullscreen.png")
     sb.sleep(6)
     imgUrl = sb.get_current_url()
     i = 1
@@ -284,7 +308,7 @@ body = ''
 statuRenew = False
 audioMP3 = '/' + urlBase + '.mp3'
 audioWAV = '/' + urlBase + '.wav'
-imgFile = urlBase + '.png'
+# imgFile = urlBase + '.png'
 ##
 urlLogin = 'https://' + urlBase + '/login'
 urlRenew = 'https://' + urlBase + '/vps-renew'
@@ -301,7 +325,7 @@ with SB(uc=True) as sb:  # By default, browser="chrome" if not set.
                 if login():
                     i = 1
                     while not statuRenew:
-                        if i > 10:
+                        if i > 15:
                             break
                         renew()
                         i += 1
@@ -310,7 +334,7 @@ with SB(uc=True) as sb:  # By default, browser="chrome" if not set.
             try:
                 screenshot()
             finally:
-                push(e)
+                push(str(e))
         push(body)
     else:
         print('- please check urlBase/username/password')
