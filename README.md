@@ -1,13 +1,16 @@
 ## [![H](https://github.com/mybdye/H-W-SeleniumBase/actions/workflows/H.yml/badge.svg)](https://github.com/mybdye/H-W-SeleniumBase/actions/workflows/H.yml) [![W](https://github.com/mybdye/H-W-SeleniumBase/actions/workflows/W.yml/badge.svg)](https://github.com/mybdye/H-W-SeleniumBase/actions/workflows/W.yml)
 Project for SeleniumBase study.
+
 #### ⏱️ TODO
 - [ ] 概率卡在 sb.open() 导致超时
 
 #### ✏️ NOTE
-- 11.04 重新出发
-  - [x] ~~helium/selenium/Playwright~~ >> SeleniumBase
-  - [x] ~~MacOS/Windows~~ >> Ubuntu
-  * 每次运行时间约 2 分钟
+- 11.16
+  - renew 尝试次数 10 改到 15，全程 2~6 分钟
+  - yml 配置超时 10 分钟自动取消 action
+- 11.04
+  - ~~helium/selenium/Playwright~~ >> SeleniumBase
+  - ~~MacOS/Windows~~ >> Ubuntu
 
 #### 🌟️ SUGGESTION
 ```diff
