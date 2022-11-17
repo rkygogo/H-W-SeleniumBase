@@ -4,6 +4,7 @@
 import os, requests, urllib, pydub, base64, ssl, random
 from seleniumbase import SB
 from func_timeout import func_set_timeout, FunctionTimedOut
+from urllib.parse import quote
 import pyscreenshot as ImageGrab
 
 @func_set_timeout(60)
@@ -35,7 +36,8 @@ def recaptcha():
     print('- switch to frame checkbox')
     checkbox = 'span#recaptcha-anchor'
     print('- click checkbox')
-    sb.click(checkbox)
+    sb.sleep(random.randint(3,6))
+    sb.click(checkbox, timeout=10)
     sb.sleep(4)
     #   预防弹了广告
     sb.switch_to_window(0)
@@ -80,7 +82,8 @@ def recaptcha():
             msgBlock = '[class*="rc-doscaptcha-body-text"]'
             if sb.assert_element(msgBlock, timeout=20):
                 body = sb.get_text(msgBlock)
-                print('- 💣 maybe block by google', body)
+                print('- 💣 maybe block by google\n', body)
+                body = '[%s***]\n💣 %s' % (username[:3], body)
                 break
             elif tryReCAPTCHA > 3:
                 break
@@ -147,12 +150,11 @@ def renew():
     print('- renew')
     #sb.open(urlRenew)
     urlOpen(urlRenew)
-    sb.sleep(10)
+    sb.sleep(2)
     #screenshot()
     #sb.switch_to_window(0)
     sb.assert_text('Renew VPS', 'h2', timeout=10)
     print('- access')
-    sb.sleep(random.randint(1,3))
     #
     print('- fill web_address')
     sb.type('#web_address', urlBase)
@@ -175,20 +177,23 @@ def renew():
     captcharesult = int(captcharesult)
     print('- captcharesult: %d %s %d = %d' % (number1, method, number2, captcharesult))
     #
+    sb.sleep(random.randint(1,3))
     print('- fill captcha')
     sb.type('#captcha', captcharesult)
     #
+    sb.sleep(random.randint(1,3))
     print('- check agreement')
     sb.click('[name*="agreement"]')
     #
+    sb.sleep(random.randint(1,3))
     print('- click Renew VPS')
     sb.click('button:contains("Renew VPS")')
-    sb.sleep(5)
+    sb.sleep(8)
     statuRenew = renew_check()
 
 
 def renew_check():
-    global body
+    global body, countRenew
     print('- renew_check')
     sb.assert_element('div#response', timeout=20)
     print('- access')
@@ -201,10 +206,13 @@ def renew_check():
         sb.sleep(2)
         body = sb.get_text('div#response')
         i += 1
-    print('- response:', body)
+    print('- response [After %d run(s)]: %s' % (countRenew, body))
     if 'renew' in body:
-        body = '[%s***] 🎉 %s' % (username[:3], body)
+        body = '[%s***][After %d run(s)]\n🎉 %s' % (username[:3], countRenew, body)
         return True
+    else:
+        body = '[%s***][After %d run(s)]\n💣 %s' % (username[:3], countRenew, body)
+
 
 
 def screenshot():
@@ -245,31 +253,35 @@ def url_decode(s):
 
 def push(body):
     print('- body: %s \n- waiting for push result' % body)
-    # bark push
-    if barkToken == '':
-        print('*** No BARK_KEY ***')
-    else:
-        barkurl = 'https://api.day.app/' + barkToken
-        title = urlBase
-        rq_bark = requests.get(url=f'{barkurl}/{title}/{body}?isArchive=1')
-        if rq_bark.status_code == 200:
-            print('- bark push Done!')
-        else:
-            print('*** bark push fail! ***', rq_bark.content.decode('utf-8'))
+    
     # tg push
     if tgBotToken == '' or tgUserID == '':
         print('*** No TG_BOT_TOKEN or TG_USER_ID ***')
     else:
-        body = urlBase + '\n\n' + body
+        tgbody = urlBase + '\n\n' + body
         server = 'https://api.telegram.org'
         tgurl = server + '/bot' + tgBotToken + '/sendMessage'
-        rq_tg = requests.post(tgurl, data={'chat_id': tgUserID, 'text': body}, headers={
+        rq_tg = requests.post(tgurl, data={'chat_id': tgUserID, 'text': tgbody}, headers={
             'Content-Type': 'application/x-www-form-urlencoded'})
         if rq_tg.status_code == 200:
             print('- tg push Done!')
         else:
             print('*** tg push fail! ***', rq_tg.content.decode('utf-8'))
-    print('- finish!')
+            
+    # bark push
+    if barkToken == '':
+        print('*** No BARK_KEY ***')
+    else:
+        barkurl = 'https://api.day.app/' + barkToken
+        barktitle = quote(urlBase, safe='')
+        barkbody = quote(body, safe='')
+        rq_bark = requests.get(url=f'{barkurl}/{barktitle}/{barkbody}?isArchive=1')
+        if rq_bark.status_code == 200:
+            print('- bark push Done!')
+        else:
+            print('*** bark push fail! ***', rq_bark.content.decode('utf-8'))
+    
+    print('- push finish!')
 
 
 ##
@@ -306,6 +318,7 @@ except:
 ##
 body = ''
 statuRenew = False
+countRenew = 1
 audioMP3 = '/' + urlBase + '.mp3'
 audioWAV = '/' + urlBase + '.wav'
 # imgFile = urlBase + '.png'
@@ -323,12 +336,11 @@ with SB(uc=True, pls="none", sjw=True) as sb:  # By default, browser="chrome" if
         try:
             if recaptcha():
                 if login():
-                    i = 1
                     while not statuRenew:
-                        if i > 15:
+                        if countRenew > 15:
                             break
                         renew()
-                        i += 1
+                        countRenew += 1
         except Exception as e:
             print('💥', e)
             try:
