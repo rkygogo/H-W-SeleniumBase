@@ -25,7 +25,7 @@ def recaptcha():
         sb.assert_text('Login', 'h2', timeout=20)
         print('- access')
     except Exception as e:
-        print('👀 ', e, '\n try again!')
+        print('- 👀 sb.open() issue:', e, '\n try again!')
         sb.driver.close()
         #sb.open(urlLogin)
         urlOpen(urlLogin)
@@ -35,13 +35,16 @@ def recaptcha():
     sb.switch_to_frame('[src*="/recaptcha/api2/anchor?"]')
     print('- switch to frame checkbox')
     checkbox = 'span#recaptcha-anchor'
-    print('- click checkbox')
     sb.sleep(random.randint(3,6))
+    print('- click checkbox')
     sb.click(checkbox, timeout=10)
     sb.sleep(4)
-    #   预防弹了广告
-    sb.switch_to_window(0)
-    sb.switch_to_frame('[src*="/recaptcha/api2/anchor?"]')
+    try:
+        #   预防弹了广告
+        sb.switch_to_window(0)
+        sb.switch_to_frame('[src*="/recaptcha/api2/anchor?"]')
+    except Exception as e:
+        print('- 👀 switch issue:', e)
     status = checkbox_status()
     tryReCAPTCHA = 1
     while status != 'true':
@@ -143,7 +146,7 @@ def speech_to_text():
             if ' ' in text:
                 break
         except Exception as e:
-            print('💥 speech2text:', e)
+            print('- 💥 speech2text:', e)
         trySpeech += 1
     return text
 
@@ -345,7 +348,7 @@ with SB(uc=True, pls="none", sjw=True) as sb:  # By default, browser="chrome" if
                         renew()
                         countRenew += 1
         except Exception as e:
-            print('💥', e)
+            print('- 💥', e)
             try:
                 screenshot()
             finally:
