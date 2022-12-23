@@ -1,5 +1,10 @@
-## [![H](https://github.com/mybdye/H-W-SeleniumBase/actions/workflows/H.yml/badge.svg)](https://github.com/mybdye/H-W-SeleniumBase/actions/workflows/H.yml) [![W](https://github.com/mybdye/H-W-SeleniumBase/actions/workflows/W.yml/badge.svg)](https://github.com/mybdye/H-W-SeleniumBase/actions/workflows/W.yml)
+## [![H](https://github.com/mybdye/H-W/actions/workflows/H.yml/badge.svg)](https://github.com/mybdye/H-W/actions/workflows/H.yml) [![W](https://github.com/mybdye/H-W/actions/workflows/W.yml/badge.svg)](https://github.com/mybdye/H-W/actions/workflows/W.yml)
 Project for SeleniumBase study.
+#### ⚠️ 声明
+- 本项目为学习交流的开源非营利项目，使用需严格遵守开源许可协议。
+- 严禁用于商业用途，禁止使用本项目进行任何盈利活动。
+- 公开仓库内请勿添加任何违反他人利益的说明(包括但不限于文字图片等)。
+- 本项目对您如有困扰请联系我们删除。
 
 #### ⏱️ TODO
 - None
